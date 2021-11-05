@@ -3,7 +3,7 @@
   <slot name="entity-header">
     <div class="vce__header">
       <div class="vce__header-main">
-        <slot name="entity-nav">
+        <slot name="entity-nav" :items="[{ name }, { name: 'created' }]">
           <div class="vce__header-nav">
             <span class="vce__header-nav__item">
               {{ name }}
@@ -24,7 +24,10 @@
       </div>
     </div>
     <div class="vce-header-aside">
-      <button v-if="isList" @click="changePageState('create')">create</button>
+      <button
+        v-if="isList" 
+        @click="changePageState('create')"
+      >create</button>
       <button v-else @click="changePageState('list')">back</button>
     </div>
   </slot>
@@ -35,12 +38,17 @@
           <thead>
             <tr>
               <th v-for="f in entity.fields" :key="f.key">{{ f.name }}</th>
+              <th>Options</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="ed in items">
               <td v-for="f in entity.fields">
                 {{ ed[f.key] }}
+              </td>
+              <td>
+                <a href="javascript:;" @click="changePageState('edit')">Edit</a>
+                <a href="javascript:;" @click="handleRemove(ed)">Delete</a>
               </td>
             </tr>
           </tbody>
@@ -49,9 +57,6 @@
   </div>
   <div v-show="!isList">
     <slot name="entity-detail">
-      
-
-
       <slot name="entity-detail-footer">
         <button v-if="isCreate" @click="handleCreate">Create</button>
         <button v-else>Modify</button>
@@ -65,7 +70,6 @@
 </template>
 <script lang="ts">
 import { computed, defineComponent, onMounted, PropType, ref } from 'vue-demi'
-import { Entity } from '.'
 import { Field, PageState, EntityComposition } from './type'
 export default defineComponent({
   props: {
@@ -88,6 +92,7 @@ export default defineComponent({
     const isList = computed(() => pageState.value === PageState.list)
     const isCreate = computed(() => pageState.value === PageState.create)
     const items = computed(() => props.entity.entities.value)
+    
     function changePageState (state: string | PageState) {
       window.history.pushState(null, '', window.location.pathname + '?' + state)
       pageState.value = state as PageState
@@ -108,6 +113,10 @@ export default defineComponent({
       .then(() => changePageState(PageState.list))
 
     }
+
+    function handleRemove (item: any) {
+      props.entity.remove(item)
+    }
     
 
     return {
@@ -116,6 +125,7 @@ export default defineComponent({
       isCreate,
       changePageState,
       handleCreate,
+      handleRemove,
       items,
     }
     

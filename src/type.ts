@@ -1,9 +1,17 @@
 import { Ref, UnwrapRef } from 'vue-demi'
 
+export enum FieldType {
+  string = 'string',
+  number = 'number',
+  date = 'date',
+  enum = 'enum',
+  mail = 'mail',
+}
+
 export interface Field {
   name: string,
   key: string | number,
-  type: 'string' | 'number' | 'date' | 'enum' | 'mail',
+  type: FieldType,
   disable?: boolean
   visiable?: boolean
   default?: any

@@ -28,7 +28,7 @@ export function useEntity<T = any> (opt: {
     .then((ed) => {
       onCreated && onCreated(ed)
       query.value = defaultQuery
-      listHandler()
+      // listHandler()
       return ed
     })
   }
@@ -47,6 +47,7 @@ export function useEntity<T = any> (opt: {
     return removeHandler(ud)
     .then((res) => {
       onRemoved && onRemoved(ud)
+      listHandler()
       return res
     })
 
